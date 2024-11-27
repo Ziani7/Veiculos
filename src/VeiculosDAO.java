@@ -28,7 +28,7 @@ public class VeiculosDAO {
 		}
 	}
 	
-	public LinkedList<String> listarFuncionariosCombo(String filtro) {
+	public LinkedList<String> listarVeiculosCombo(String filtro) {
 		String sql = "select " + filtro + " from veiculos";
 		try {
 			PreparedStatement ps = (PreparedStatement) conexao.prepareStatement(sql);
@@ -41,6 +41,27 @@ public class VeiculosDAO {
 			ps.close();
 			return itens;
 			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public LinkedList<Veiculos> listarVeiculos(String filtro1, String filtro2){
+		String sql = "select * from veiculos where " + filtro1 + " = " + filtro2;
+		PreparedStatement ps;
+		try {
+			ps = (PreparedStatement) conexao.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			LinkedList<Veiculos> itens = new LinkedList<Veiculos>();
+			while(rs.next()) {
+				Veiculos v = new Veiculos(rs.getString("marca"), rs.getString("modelo"), rs.getInt("ano"));
+				v.setId(rs.getInt("id"));
+				itens.add(v);
+			}
+			rs.close();
+			ps.close();
+			return itens;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

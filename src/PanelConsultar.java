@@ -18,18 +18,16 @@ public class PanelConsultar extends JPanel {
 	private JComboBox comboBuscar;
 	private JScrollPane scrollPane;
 	private JTable table;
-	private JLabel lblNewLabel_2;
-	private JTextField textField;
 
 	
 	public PanelConsultar() {
 		initComponents();
 	}
 	private void initComponents() {
-		setLayout(new MigLayout("", "[grow][][][grow][][grow][grow]", "[][][][][][][][][grow][grow]"));
+		setLayout(new MigLayout("", "[grow][][][grow][][grow][grow]", "[][][][][][][][grow][grow]"));
 		
 		this.lblNewLabel = new JLabel("Consultar Ve\u00EDculos");
-		add(this.lblNewLabel, "cell 1 1 3 1,alignx center");
+		add(this.lblNewLabel, "cell 1 1 5 1,alignx center");
 		
 		this.lblNewLabel_1 = new JLabel("Buscar por:");
 		add(this.lblNewLabel_1, "cell 1 3,alignx trailing");
@@ -46,19 +44,13 @@ public class PanelConsultar extends JPanel {
 		this.comboBuscar = new JComboBox();
 		this.comboBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				preencheTabela();
 			}
 		});
 		add(this.comboBuscar, "cell 5 3,growx");
 		
-		this.lblNewLabel_2 = new JLabel("Pesquisar:");
-		add(this.lblNewLabel_2, "cell 1 5");
-		
-		this.textField = new JTextField();
-		add(this.textField, "cell 3 5,growx");
-		this.textField.setColumns(10);
-		
 		this.scrollPane = new JScrollPane();
-		add(this.scrollPane, "cell 1 8 5 1,grow");
+		add(this.scrollPane, "cell 1 7 5 1,grow");
 		
 		this.table = new JTable();
 		this.table.setModel(new DefaultTableModel(
@@ -72,10 +64,19 @@ public class PanelConsultar extends JPanel {
 	}
 
 	private void preencheCombo() {
+		DefaultTableModel model = (DefaultTableModel)table.getModel();
+		model.setRowCount(0);
 		VeiculosDAO dao = new VeiculosDAO();
-		LinkedList<String> nomes = dao.listarFuncionariosCombo(comboFiltrar.getSelectedItem().toString());
+		comboBuscar.removeAllItems();
+		LinkedList<String> nomes = dao.listarVeiculosCombo(comboFiltrar.getSelectedItem().toString());
 		for (String string : nomes) {
 			comboBuscar.addItem(string);
 		}
+	}
+	
+	private void preencheTabela() {
+		VeiculosDAO vdao = new VeiculosDAO();
+		LinkedList<Veiculos> lista = vdao.listarVeiculos(comboFiltrar.getSelectedItem().toString(), comboBuscar.getSelectedItem().toString());
+		
 	}
 }
