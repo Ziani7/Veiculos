@@ -48,7 +48,28 @@ public class VeiculosDAO {
 	}
 	
 	public LinkedList<Veiculos> listarVeiculos(String filtro1, String filtro2){
-		String sql = "select * from veiculos where " + filtro1 + " = " + filtro2;
+		String sql = "select * from veiculos where " + filtro1 + " = " + "'" +filtro2+"'";
+		PreparedStatement ps;
+		try {
+			ps = (PreparedStatement) conexao.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			LinkedList<Veiculos> itens = new LinkedList<Veiculos>();
+			while(rs.next()) {
+				Veiculos v = new Veiculos(rs.getString("marca"), rs.getString("modelo"), rs.getInt("ano"));
+				v.setId(rs.getInt("id"));
+				itens.add(v);
+			}
+			rs.close();
+			ps.close();
+			return itens;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public LinkedList<Veiculos> listarTodos(){
+		String sql = "select * from veiculos";
 		PreparedStatement ps;
 		try {
 			ps = (PreparedStatement) conexao.prepareStatement(sql);

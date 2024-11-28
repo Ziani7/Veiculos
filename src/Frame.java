@@ -56,7 +56,7 @@ public class Frame extends JFrame {
 		});
 		this.mnNewMenu.add(this.mntmNewMenuItem_1);
 		
-		this.mntmNewMenuItem_2 = new JMenuItem("Consultar/Excluir");
+		this.mntmNewMenuItem_2 = new JMenuItem("Editar/Excluir");
 		this.mntmNewMenuItem_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mudaTelaAlt();

@@ -22,6 +22,7 @@ public class PanelConsultar extends JPanel {
 	
 	public PanelConsultar() {
 		initComponents();
+		preencheTabInicio();
 	}
 	private void initComponents() {
 		setLayout(new MigLayout("", "[grow][][][grow][][grow][grow]", "[][][][][][][][grow][grow]"));
@@ -35,6 +36,7 @@ public class PanelConsultar extends JPanel {
 		this.comboFiltrar = new JComboBox();
 		this.comboFiltrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				comboBuscar.removeAllItems();
 				preencheCombo();
 			}
 		});
@@ -43,9 +45,11 @@ public class PanelConsultar extends JPanel {
 		
 		this.comboBuscar = new JComboBox();
 		this.comboBuscar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				preencheTabela();
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        if (comboBuscar.getSelectedItem() != null) {
+		            preencheTabela();
+		        }
+		    }
 		});
 		add(this.comboBuscar, "cell 5 3,growx");
 		
@@ -64,19 +68,38 @@ public class PanelConsultar extends JPanel {
 	}
 
 	private void preencheCombo() {
-		DefaultTableModel model = (DefaultTableModel)table.getModel();
-		model.setRowCount(0);
-		VeiculosDAO dao = new VeiculosDAO();
-		comboBuscar.removeAllItems();
-		LinkedList<String> nomes = dao.listarVeiculosCombo(comboFiltrar.getSelectedItem().toString());
-		for (String string : nomes) {
-			comboBuscar.addItem(string);
-		}
+	    comboBuscar.removeAllItems();
+	    VeiculosDAO dao = new VeiculosDAO();
+	    LinkedList<String> nomes = dao.listarVeiculosCombo(comboFiltrar.getSelectedItem().toString());
+	    if (nomes != null && !nomes.isEmpty()) {
+	        for (String string : nomes) {
+	            comboBuscar.addItem(string);
+	        }
+	    } else {
+	        comboBuscar.addItem("Nenhum resultado");
+	    }
 	}
 	
 	private void preencheTabela() {
+	    if (comboBuscar.getSelectedItem() == null || 
+	        "Nenhum resultado".equals(comboBuscar.getSelectedItem())) {
+	    }
+	    VeiculosDAO vdao = new VeiculosDAO();
+	    DefaultTableModel model = (DefaultTableModel) table.getModel();
+	    model.setRowCount(0);
+	    LinkedList<Veiculos> lista = vdao.listarVeiculos(comboFiltrar.getSelectedItem().toString(), comboBuscar.getSelectedItem().toString());
+	    for (Veiculos veiculos : lista) {
+	        model.addRow(veiculos.toLinha());
+	    }
+	}
+	
+	private void preencheTabInicio() {
 		VeiculosDAO vdao = new VeiculosDAO();
-		LinkedList<Veiculos> lista = vdao.listarVeiculos(comboFiltrar.getSelectedItem().toString(), comboBuscar.getSelectedItem().toString());
-		
+	    DefaultTableModel model = (DefaultTableModel) table.getModel();
+	    model.setRowCount(0);
+	    LinkedList<Veiculos> lista = vdao.listarTodos();
+	    for (Veiculos veiculos : lista) {
+	        model.addRow(veiculos.toLinha());
+	    }
 	}
 }
